@@ -1,0 +1,35 @@
+name: home-backend
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - postgres
+    networks:
+      - home-network
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=home
+    ports:
+      - "5432:5432"
+    networks:
+      - home-network
+
+networks:
+  home-network:
+      driver: bridge

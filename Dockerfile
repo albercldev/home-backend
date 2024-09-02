@@ -2,14 +2,18 @@ FROM node:20 AS build
 
 WORKDIR /app
 
-COPY package.json .
-COPY package-lock.json .
+COPY package.json package-lock.json ./
 
 RUN npm i -ci
 
-COPY . .
+COPY \
+src/ \
+nest-cli.json \
+tsconfig.json \
+tsconfig.build.json \
+/app/
 
-RUN npm run build
+RUN npm run build && npm prune --production
 
 FROM node:20 AS development
 
@@ -28,9 +32,8 @@ FROM node:20 AS production
 
 WORKDIR /app
 
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/package.json .
-COPY --from=build /app/package-lock.json .
+COPY --from=build /app/package.json /app/package-lock.json ./
 COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
 
 CMD npm run start:prod

@@ -1,7 +1,10 @@
 name: home-backend
 services:
   server:
-    image: ghcr.io/albercldev/home-backend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
     ports:
       - "8001:3000"
     environment:

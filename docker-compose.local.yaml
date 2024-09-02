@@ -1,4 +1,4 @@
-name: home-backend
+name: home-backend-local
 services:
   server:
     build:

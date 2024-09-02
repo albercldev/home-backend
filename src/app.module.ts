@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import appConfig from './config/app.config';
 import { GithubOauthModule } from './auth/github/github-oauth.module';
 import { JwtAuthModule } from './auth/jwt/jwt-auth.module';
+import { DockerModule } from './docker/docker.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { JwtAuthModule } from './auth/jwt/jwt-auth.module';
     CqrsModule,
     ConfigModule.forRoot({ isGlobal: true, load: [appConfig] }),
     GithubOauthModule,
+    DockerModule,
   ],
 })
 export class AppModule {}

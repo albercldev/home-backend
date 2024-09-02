@@ -1,15 +1,18 @@
 name: home-backend
 services:
   server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
+    image: ghcr.io/albercldev/home-backend:latest
     ports:
-      - "3000:3000"
-    volumes:
-      - .:/app
+      - "8001:3000"
     environment:
       - NODE_ENV=development
       - PORT=3000
       - POSTGRES_HOST=postgres
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=home
+    ports:
+      - "5432:5432"

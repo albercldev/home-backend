@@ -1,4 +1,3 @@
-import Deployment from 'src/deployment/domain/write-models/deployment.model';
 import DeploymentAdapter from '../../application/adapters/deployment.adapter';
 import { Injectable, Logger } from '@nestjs/common';
 import { AppConfig } from '../../../config/app.config';
@@ -9,6 +8,7 @@ import {
 } from '../../../utils/fs.utils';
 import DeploymentError from '../../domain/errors/deployment.error';
 import CliUtils from '../../../utils/cli.utils';
+import Deployment from '../../domain/write-models/deployment.model';
 
 @Injectable()
 export default class DockerDeploymentAdapter extends DeploymentAdapter {

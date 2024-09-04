@@ -3,8 +3,8 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import DeploymentWriteRepository from '../../application/adapters/deployment.write.repository';
 import DeploymentEntity from './entities/deployment.entity';
-import Deployment from 'src/deployment/domain/write-models/deployment.model';
 import DeploymentPermissionEntity from './entities/deployment-permission.entity';
+import Deployment from '../../domain/write-models/deployment.model';
 
 @Injectable()
 export default class TypeOrmDeploymentWriteRepository

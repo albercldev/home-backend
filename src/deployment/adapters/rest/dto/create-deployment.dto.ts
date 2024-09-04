@@ -15,7 +15,7 @@ export default class CreateDeploymentDto {
   })
   @IsString()
   @IsNotEmpty()
-  @IsAlphanumeric()
+  @IsAscii()
   @MaxLength(50)
   name: string;
 

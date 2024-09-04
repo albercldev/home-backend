@@ -7,7 +7,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - POSTGRES_HOST=postgres
+      - POSTGRES_HOST=postgres:8002
   db:
     image: postgres:13
     environment:
@@ -15,4 +15,4 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=home
     ports:
-      - "5432:5432"
+      - "8002:5432"

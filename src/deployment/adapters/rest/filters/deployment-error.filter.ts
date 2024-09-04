@@ -3,25 +3,40 @@ import {
   Catch,
   ExceptionFilter,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
-import GitServerUnauthorizedError from '../../../domain/errors/git-server-unauthorized.error';
+import DeploymentError from '../../../domain/errors/deployment.error';
 import { Response } from 'express';
+import GenericDomainError from '../../../../shared/domain/errors/generic-domain.error';
 
-@Catch(Error)
-export default class DeploymentErrorFilter implements ExceptionFilter {
+@Catch(GenericDomainError)
+export default class GenericDomainFilter implements ExceptionFilter {
+  private static readonly logger = new Logger(GenericDomainFilter.name);
+
   catch(exception: Error, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse();
 
-    if (exception instanceof GitServerUnauthorizedError) {
-      this.buildHttpError(response, HttpStatus.FORBIDDEN, exception.message);
+    if (exception instanceof DeploymentError) {
+      this.buildHttpError(response, HttpStatus.FORBIDDEN, exception);
+    } else {
+      this.buildHttpError(
+        response,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        exception,
+      );
     }
   }
 
-  buildHttpError(response: Response, status: HttpStatus, message: string) {
+  buildHttpError(response: Response, status: HttpStatus, error: Error) {
+    GenericDomainFilter.logger.error(
+      `Error caught: ${error.message}`,
+      error.stack,
+    );
     response.status(status).json({
       statusCode: status,
-      message,
+      message: error.message,
+      stack: error.stack,
     });
   }
 }

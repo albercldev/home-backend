@@ -7,14 +7,15 @@ export default class CliUtils {
   static async run(command: string): Promise<number> {
     return new Promise<number>((resolve) => {
       exec(command, (error, stdout, stderr) => {
-        if (error) {
-          resolve(error.code);
-        }
-
-        this.logger.debug(`Command finished: ${command}`);
+        this.logger.debug(
+          `Command finished with status ${error?.code || 0}: ${command}`,
+        );
         if (stdout) this.logger.debug(`stdout:\n${stdout}`);
         if (stderr) this.logger.error(`stderr:\n${stderr}`);
 
+        if (error) {
+          resolve(error.code);
+        }
         resolve(0);
       });
     });

@@ -7,7 +7,7 @@ import {
   createDirectoryIfNotExists,
   ensureDirectoryAccess,
 } from '../../../utils/fs.utils';
-import GitServerUnauthorizedError from '../../domain/errors/git-server-unauthorized.error';
+import DeploymentError from '../../domain/errors/deployment.error';
 import CliUtils from '../../../utils/cli.utils';
 
 @Injectable()
@@ -34,14 +34,20 @@ export default class DockerDeploymentAdapter extends DeploymentAdapter {
     const gitCloneStatus = await CliUtils.run(
       `git clone https://${this.gitConfig.token}@${this.gitConfig.server}/${deployment.repositoryOwner}/${deployment.repository}`,
     );
+    if (gitCloneStatus !== 0)
+      throw new DeploymentError('Error while cloning repository');
 
-    if (gitCloneStatus === 128) throw new GitServerUnauthorizedError();
-
-    await CliUtils.run(
+    const composeCopyStatus = await CliUtils.run(
       `cp -r ${deployment.repository}/docker-compose.yaml ${this.deploysPath}/${deployment.repositoryOwner}/${deployment.repository}`,
     );
+    if (composeCopyStatus !== 0)
+      throw new DeploymentError('Error while copying docker-compose.yaml');
 
-    await CliUtils.run(`rm -rf ${deployment.repository}`);
+    const rmClonedRepoStatus = await CliUtils.run(
+      `rm -rf ${deployment.repository}`,
+    );
+    if (rmClonedRepoStatus !== 0)
+      throw new DeploymentError('Error while removing cloned repository');
 
     // Deploy the repository with docker-compose up -d
     this.logger.log(
@@ -49,9 +55,11 @@ export default class DockerDeploymentAdapter extends DeploymentAdapter {
     );
     // Write .env file
     this.setEnvironmentFile(deployment);
-    await CliUtils.run(
+    const composeUpStatus = await CliUtils.run(
       `docker-compose -f ${this.deploysPath}/${deployment.repositoryOwner}/${deployment.repository}/docker-compose.yaml up -d --no-start`,
     );
+    if (composeUpStatus !== 0)
+      throw new DeploymentError('Error while running docker-compose up');
 
     await this.start(deployment);
   }
@@ -60,9 +68,11 @@ export default class DockerDeploymentAdapter extends DeploymentAdapter {
     this.logger.log(
       `Starting ${deployment.repositoryOwner}/${deployment.repository}...`,
     );
-    CliUtils.run(
+    const composeStartStatus = await CliUtils.run(
       `docker-compose -f ${this.deploysPath}/${deployment.repositoryOwner}/${deployment.repository}/docker-compose.yaml start`,
     );
+    if (composeStartStatus !== 0)
+      throw new DeploymentError('Error while running docker-compose start');
   }
 
   async stop(deployment: Deployment): Promise<void> {

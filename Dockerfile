@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-RUN npm i -ci
+RUN npm i -ci --omit=dev
 
 COPY \
 src/ \
@@ -13,7 +13,7 @@ tsconfig.json \
 tsconfig.build.json \
 /app/
 
-RUN npm run build --omit=dev
+RUN npm run build
 
 FROM node:20-alpine AS development
 

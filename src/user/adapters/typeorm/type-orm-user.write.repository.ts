@@ -7,16 +7,24 @@ import { Role } from '../../domain/enums/role.enum';
 import User from '../../domain/write-models/user.model';
 
 @Injectable()
-export default class UserWriteRepositoryTypeORM implements UserWriteRepository {
+export default class TypeOrmUserWriteRepository implements UserWriteRepository {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
+  toModel(user: UserEntity): User {
+    return new User(
+      user.uuid,
+      user.username,
+      user.passwordHash,
+      user.roles as Role[],
+    );
+  }
+
   async createUser(user: User): Promise<string> {
     let createdEntity = this.userRepository.create({
       username: user.username,
-      email: user.email,
       passwordHash: user.passwordHash,
       roles: user.roles,
     });
@@ -24,16 +32,20 @@ export default class UserWriteRepositoryTypeORM implements UserWriteRepository {
     return savedUser.uuid;
   }
 
-  async getUsers(): Promise<User[]> {
-    const users = await this.userRepository.find();
-    return users.map((user) => {
-      return new User(
-        user.uuid,
-        user.username,
-        user.email,
-        user.passwordHash,
-        user.roles as Role[],
-      );
+  async findUserByUsername(username: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({
+      where: { username },
     });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.toModel(user);
+  }
+
+  async findUsers(): Promise<User[]> {
+    const users = await this.userRepository.find();
+    return users.map((user) => this.toModel(user));
   }
 }

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import UserEntity from '../user/adapters/typeorm/entities/user.entity';
 
 @Module({
   imports: [
@@ -11,7 +10,7 @@ import UserEntity from '../user/adapters/typeorm/entities/user.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'home',
-      entities: [UserEntity],
+      entities: ['dist/**/*.entity{.ts,.js}'],
     }),
   ],
 })

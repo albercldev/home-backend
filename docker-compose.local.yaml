@@ -10,6 +10,7 @@ services:
       - "9229:9229"
     volumes:
       - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - NODE_ENV=development
       - PORT=3000

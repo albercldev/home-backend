@@ -6,6 +6,7 @@ import { AppConfig } from '../../config/app.config';
 import { JwtAuthStrategy } from './jwt-auth.strategy';
 import { JwtAuthService } from './jwt-auth.service';
 import { CqrsModule } from '@nestjs/cqrs';
+import { JwtController } from './jwt.controller';
 
 @Module({
   imports: [
@@ -23,5 +24,6 @@ import { CqrsModule } from '@nestjs/cqrs';
   ],
   providers: [JwtAuthStrategy, JwtAuthService],
   exports: [JwtAuthService],
+  controllers: [JwtController],
 })
 export class JwtAuthModule {}

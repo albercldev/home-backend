@@ -16,9 +16,6 @@ export default class UserEntity {
   @Column()
   username: string;
 
-  @Column()
-  email: string;
-
   @Column({ name: 'password_hash' })
   passwordHash: string;
 
@@ -26,11 +23,6 @@ export default class UserEntity {
   roles: string[];
 
   toModel() {
-    return new UserReadModel(
-      this.uuid,
-      this.username,
-      this.email,
-      this.roles as Role[],
-    );
+    return new UserReadModel(this.uuid, this.username, this.roles as Role[]);
   }
 }

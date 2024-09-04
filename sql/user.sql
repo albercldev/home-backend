@@ -14,6 +14,3 @@ create table common."user"
     github_id     varchar
 );
 
-alter table common."user"
-    owner to postgres;
-

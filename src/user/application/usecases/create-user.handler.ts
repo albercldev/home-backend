@@ -8,12 +8,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   constructor(private readonly userRepository: UserWriteRepository) {}
 
   async execute(command: CreateUserCommand) {
-    const user = User.create(
-      command.email,
-      command.username,
-      command.password,
-      command.roles,
-    );
+    const user = User.create(command.username, command.password, command.roles);
 
     const id = await this.userRepository.createUser(user);
     user.commit();

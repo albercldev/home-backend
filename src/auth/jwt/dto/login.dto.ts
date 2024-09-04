@@ -1,13 +1,7 @@
-import {
-  ArrayMinSize,
-  ArrayUnique,
-  IsAscii,
-  IsOptional,
-  Length,
-} from 'class-validator';
+import { IsAscii, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export default class PostUserDto {
+export default class LoginDto {
   @IsAscii()
   @Length(3, 20)
   @ApiProperty({
@@ -19,7 +13,6 @@ export default class PostUserDto {
   readonly username: string;
 
   @Length(8, 20)
-  @IsOptional()
   @ApiProperty({
     description: 'The password of the user',
     example: 'password',
@@ -27,14 +20,4 @@ export default class PostUserDto {
     maxLength: 20,
   })
   readonly password: string;
-
-  @ArrayUnique()
-  @ArrayMinSize(1)
-  @ApiProperty({
-    description: 'The roles of the user',
-    example: ['admin', 'user'],
-    minLength: 1,
-    uniqueItems: true,
-  })
-  readonly roles: string[];
 }

@@ -6,7 +6,7 @@ import UserReadRepository from '../../application/adapters/user.read.repository'
 import UserReadModel from '../../domain/read-models/user.read.model';
 
 @Injectable()
-export default class UserReadRepositoryTypeORM extends UserReadRepository {
+export default class TypeOrmUserReadRepository extends UserReadRepository {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,

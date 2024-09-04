@@ -1,5 +1,20 @@
 export interface AppConfig {
   port: number;
+  container: {
+    composes: {
+      directory: string;
+    };
+  };
+  'container.composes.directory'?: string;
+
+  git: {
+    token: string;
+    server: string;
+    user: string;
+  };
+  'git.token'?: string;
+  'git.server'?: string;
+  'git.user'?: string;
 
   auth: {
     jwt: {
@@ -24,6 +39,16 @@ export interface AppConfig {
 export default function appConfig(): AppConfig {
   return {
     port: parseInt(process.env.PORT) || 3000,
+    container: {
+      composes: {
+        directory: process.env.COMPOSES_DIRECTORY || './composes',
+      },
+    },
+    git: {
+      token: process.env.GIT_TOKEN,
+      server: process.env.GIT_SERVER,
+      user: process.env.GIT_USER,
+    },
     auth: {
       jwt: {
         secret: process.env.JWT_SECRET,

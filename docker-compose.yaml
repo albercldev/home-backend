@@ -9,7 +9,7 @@ services:
       - PORT=3000
       - POSTGRES_HOST=postgres
   db:
-    image: postgres
+    image: postgres:13
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres

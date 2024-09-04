@@ -4,8 +4,10 @@ import { Request, Response } from 'express';
 import { GithubOauthGuard } from './github-oauth.guard';
 import { JwtAuthService } from '../jwt/jwt-auth.service';
 import User from '../../user/domain/write-models/user.model';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth/github')
+@ApiTags('Github Auth')
 export class GithubOauthController {
   constructor(private jwtAuthService: JwtAuthService) {}
 

@@ -7,6 +7,13 @@ import { AppConfig } from '../../config/app.config';
 import { JwtPayload } from '../../shared/types/JwtPayload';
 import { QueryBus } from '@nestjs/cqrs';
 import FindUserQuery from '../../user/application/usecases/find-user.query';
+import UserReadModel from '../../user/domain/read-models/user.read.model';
+
+declare global {
+  namespace Express {
+    interface User extends UserReadModel {}
+  }
+}
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy) {

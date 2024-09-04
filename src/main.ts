@@ -15,13 +15,11 @@ async function bootstrap() {
     .setTitle('Home API')
     .setDescription('The Home API description')
     .setVersion('1.0')
-    .addTag('home')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  const documentOptions = new DocumentBuilder()
-    .setBasePath('api')
     .addBearerAuth()
+    .addTag('Auth', 'Auth API')
+    .addTag('Github Auth', 'Github Auth API')
+    .addTag('Deployments', 'Deployments API')
+    .addTag('Users', 'Users API')
     .addOAuth2({
       type: 'oauth2',
       flows: {
@@ -35,24 +33,21 @@ async function bootstrap() {
     })
     .build();
 
-  SwaggerModule.setup(
-    'swagger',
-    app,
-    { ...document, ...documentOptions },
-    {
-      swaggerOptions: {
-        initOAuth: {
-          clientId: configService.get('auth.github.clientId'),
-          clientSecret: configService.get('auth.github.clientSecret'),
-          appName: 'Home API',
-          scopes: ['public_profile'],
-          additionalQueryStringParams: {
-            redirect_uri: 'http://localhost:3000/api/auth/github/callback',
-          },
+  const document = SwaggerModule.createDocument(app, config);
+
+  SwaggerModule.setup('swagger', app, document, {
+    swaggerOptions: {
+      initOAuth: {
+        clientId: configService.get('auth.github.clientId'),
+        clientSecret: configService.get('auth.github.clientSecret'),
+        appName: 'Home API',
+        scopes: ['public_profile'],
+        additionalQueryStringParams: {
+          redirect_uri: 'http://localhost:3000/api/auth/github/callback',
         },
       },
     },
-  );
+  });
 
   await app.listen(configService.get('port'));
 }

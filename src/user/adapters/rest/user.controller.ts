@@ -13,15 +13,14 @@ import { CreateUserCommand } from '../../application/usecases/create-user.comman
 import FindUsersQuery from '../../application/usecases/find-users.query';
 import { Role } from '../../domain/enums/role.enum';
 import FindUserQuery from '../../application/usecases/find-user.query';
-import { JwtAuthGuard } from '../../../auth/jwt/jwt-auth.guard';
 import AuthenticatedRequest from '../../../shared/types/AuthenticatedRequest';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../../auth/jwt/jwt-auth.guard';
 import { UserRoleGuard } from '../../user-role.guard';
 import { Roles } from '../../user-role.decorator';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard, UserRoleGuard)
-@Roles([Role.ADMIN])
+@ApiTags('Users')
 export class UserController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -29,17 +28,20 @@ export class UserController {
   ) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard, UserRoleGuard)
+  @Roles([Role.ADMIN])
   @ApiBearerAuth()
   async getUsers() {
     return this.queryBus.execute(new FindUsersQuery());
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, UserRoleGuard)
+  @Roles([Role.ADMIN])
   @ApiBearerAuth()
-  async createUser(@Body() userDto: PostUserDto) {
-    return await this.commandBus.execute(
+  createUser(@Body() userDto: PostUserDto) {
+    return this.commandBus.execute(
       new CreateUserCommand(
-        userDto.email,
         userDto.username,
         userDto.password,
         userDto.roles as Role[],
@@ -47,12 +49,18 @@ export class UserController {
     );
   }
 
-  @Get(':uuid')
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async getUser(
-    @Request() request: AuthenticatedRequest,
-    @Param('uuid') uuid: string,
-  ) {
+  async getMe(@Request() request: AuthenticatedRequest) {
+    return this.queryBus.execute(new FindUserQuery(request.user.uuid));
+  }
+
+  @Get(':uuid')
+  @UseGuards(JwtAuthGuard, UserRoleGuard)
+  @Roles([Role.ADMIN])
+  @ApiBearerAuth()
+  async getUser(@Param('uuid') uuid: string) {
     return this.queryBus.execute(new FindUserQuery(uuid));
   }
 }

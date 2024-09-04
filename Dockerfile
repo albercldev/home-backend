@@ -13,9 +13,11 @@ tsconfig.json \
 tsconfig.build.json \
 /app/
 
-RUN npm run build && npm prune --production
+RUN npm run build --omit=dev
 
-FROM node:20 AS development
+FROM node:20-alpine AS development
+
+RUN apk add --no-cache docker-cli-compose git
 
 WORKDIR /app
 
@@ -28,7 +30,9 @@ FROM build AS test
 
 CMD npm run test
 
-FROM node:20 AS production
+FROM node:20-alpine AS production
+
+RUN apk add --no-cache docker-cli-compose git
 
 WORKDIR /app
 
